@@ -48,7 +48,7 @@ paths:
           description: User registered successfully
   /cars/me:
     get:
-      summary: Get user's cars
+      summary: Get user's cars details
       security:
         - BearerAuth: []
       responses:
@@ -81,3 +81,38 @@ paths:
       responses:
         200:
           description: List of matching cars
+  /cars/upload:
+    post:
+      summary: Upload images for a car
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Up to 10 images for the car
+      responses:
+        201:
+          description: Images uploaded successfully
+  /cars/delete/{carId}:
+    delete:
+      summary: Delete a car
+      parameters:
+        - name: carId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the car to delete
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Car deleted successfully
