@@ -92,17 +92,17 @@ const registerUser = async function (req, res) {
   }
 };
 
-const getUserData = function (req, res) {
-  const Userid = req.params.id;
-  user.findById(Userid, function (err, UserData) {
-    if (err) {
-      console.log(err);
-      return res.status(404).json({ message: "User not found" });
-    }
-    UserData.password = undefined;
-    return res.status(200).json({ data: UserData });
-  });
-};
+// const getUserData = function (req, res) {
+//   const Userid = req.params.id;
+//   user.findById(Userid, function (err, UserData) {
+//     if (err) {
+//       console.log(err);
+//       return res.status(404).json({ message: "User not found" });
+//     }
+//     UserData.password = undefined;
+//     return res.status(200).json({ data: UserData });
+//   });
+// };
 
 const getRefreshToken = function (req, res) {
   const refreshtoken = req.cookies.refreshtoken;
@@ -136,4 +136,4 @@ const getRefreshToken = function (req, res) {
   );
 };
 
-module.exports = { registerUser, loginUser, getUserData, getRefreshToken };
+module.exports = { registerUser, loginUser, getRefreshToken };

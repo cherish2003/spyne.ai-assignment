@@ -19,7 +19,7 @@ const data = {
   navMain: [
     {
       title: "Discover",
-      url: "#",
+      url: "/home/discover",
       icon: Globe,
       isActive: false,
     },
@@ -33,11 +33,6 @@ const data = {
       url: "/home/product",
       icon: Car,
     },
-    {
-      title: "Profile",
-      url: "#",
-      icon: User2,
-    },
   ],
 };
 
@@ -47,9 +42,7 @@ export function AppSidebar({ ...props }) {
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
+  
       <SidebarRail />
     </Sidebar>
   );

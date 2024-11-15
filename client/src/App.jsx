@@ -5,6 +5,7 @@ import Homepage from "./pages/Homepage";
 import UploadCarPage from "./pages/UploadCarPage";
 import Productpage from "./pages/Productpage";
 import ProductDetailPage from "./pages/ProductDetailPage";
+import Discoverpage from "./pages/Discoverpage";
 
 function App() {
   return (
@@ -12,9 +13,17 @@ function App() {
       <Routes>
         <Route path="/" element={<Authpage />} />
         <Route
+          path="/home/discover"
+          element={
+            <Homepage first={"home"} second={"discover"}>
+              <Discoverpage />
+            </Homepage>
+          }
+        />
+        <Route
           path="/home/product"
           element={
-            <Homepage>
+            <Homepage first={"home"} second={"product"}>
               <Productpage />
             </Homepage>
           }
@@ -22,7 +31,7 @@ function App() {
         <Route
           path="/home/product/detail"
           element={
-            <Homepage>
+            <Homepage first={"product"} second={"detail"}>
               <ProductDetailPage />
             </Homepage>
           }
@@ -30,7 +39,7 @@ function App() {
         <Route
           path="/home/upload"
           element={
-            <Homepage>
+            <Homepage first={"home"} second={"upload"}>
               <UploadCarPage />
             </Homepage>
           }

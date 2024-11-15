@@ -15,7 +15,7 @@ export function NavMain({ items }) {
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>spyne.ai-assignment</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
