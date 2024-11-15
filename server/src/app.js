@@ -19,7 +19,10 @@ setupSwagger(app);
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://spectacular-blini-a5bda5.netlify.app/",
+    ],
     credentials: true,
   })
 );
