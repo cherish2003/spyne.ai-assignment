@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -16,8 +16,87 @@ import {
   TabsList,
   TabsTrigger,
 } from "../components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+
+import axios from "axios";
 
 export const Authpage = () => {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const [signInEmail, setSignInEmail] = useState("");
+  const [signInPassword, setSignInPassword] = useState("");
+
+  const [signUpName, setSignUpName] = useState("");
+  const [signUpEmail, setSignUpEmail] = useState("");
+  const [signUpPassword, setSignUpPassword] = useState("");
+
+  const handleSignIn = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/signin",
+        {
+          email: signInEmail,
+          password: signInPassword,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        toast({
+          title: "Sign In Successful! ✅",
+          description: "You have successfully signed in.",
+        });
+        navigate("/home");
+      } else {
+        toast({
+          variant: "destructive",
+          title: response.data.message || "Sign In failed",
+          description: "Please check your credentials and try again.",
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+
+        title: error.response?.data?.message || "Error during sign in",
+        description: "An unexpected error occurred. Please try again later.",
+      });
+    }
+  };
+
+  const handleSignUp = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/register",
+        {
+          username: signUpName,
+          email: signUpEmail,
+          password: signUpPassword,
+        }
+      );
+
+      if (response.status === 200) {
+        toast({
+          title: "Sign Up Successful!",
+          description: "You have successfully created an account.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: response.data.message || "Sign Up failed",
+          description: "Please try again.",
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: error.response?.data?.message || "Error during sign up",
+        description: "An unexpected error occurred. Please try again later.",
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center">
@@ -43,20 +122,28 @@ export const Authpage = () => {
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="space-y-1">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="Enter your email" />
+                <Label htmlFor="signInEmail">Email</Label>
+                <Input
+                  id="signInEmail"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={signInEmail}
+                  onChange={(e) => setSignInEmail(e.target.value)}
+                />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="signInPassword">Password</Label>
                 <Input
-                  id="password"
+                  id="signInPassword"
                   type="password"
                   placeholder="Enter your password"
+                  value={signInPassword}
+                  onChange={(e) => setSignInPassword(e.target.value)}
                 />
               </div>
             </CardContent>
             <CardFooter>
-              <Button>Sign In</Button>
+              <Button onClick={handleSignIn}>Sign In</Button>
             </CardFooter>
           </Card>
         </TabsContent>
@@ -71,24 +158,37 @@ export const Authpage = () => {
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="space-y-1">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" placeholder="Enter your name" />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="Enter your email" />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="signUpName">Name</Label>
                 <Input
-                  id="password"
+                  id="signUpName"
+                  placeholder="Enter your name"
+                  value={signUpName}
+                  onChange={(e) => setSignUpName(e.target.value)}
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="signUpEmail">Email</Label>
+                <Input
+                  id="signUpEmail"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={signUpEmail}
+                  onChange={(e) => setSignUpEmail(e.target.value)}
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="signUpPassword">Password</Label>
+                <Input
+                  id="signUpPassword"
                   type="password"
                   placeholder="Create a password"
+                  value={signUpPassword}
+                  onChange={(e) => setSignUpPassword(e.target.value)}
                 />
               </div>
             </CardContent>
             <CardFooter>
-              <Button >Sign Up</Button>
+              <Button onClick={handleSignUp}>Sign Up</Button>
             </CardFooter>
           </Card>
         </TabsContent>

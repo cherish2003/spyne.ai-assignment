@@ -1,4 +1,4 @@
-const user = require("../models/user.model.js").user;
+const User = require("../models/user.model.js").User;
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
@@ -31,26 +31,25 @@ const generateTokens = function (data) {
 
 const loginUser = async function (req, res) {
   const { email, password } = req.body;
+  console.log(email, password);
+
   if (!(email && password)) {
     return res
       .status(422)
       .json({ success: false, message: "All fields are required" });
   }
   try {
-    const existingUser = await user.findOne({ email });
+    const existingUser = await User.findOne({ email });
     console.log(email, password);
     if (existingUser === null) {
-      return res.status(404).json({
-        message: "User not found",
-      });
+      return res.status(404).json({ message: "User not found" });
     }
     const encrypass = existingUser.password;
     const passRes = await bcrypt.compare(password, encrypass);
     if (!passRes) {
-      return res.status(422).json({
-        success: false,
-        message: "Invalid password",
-      });
+      return res
+        .status(422)
+        .json({ success: false, message: "Invalid password" });
     }
 
     const options = {
@@ -62,23 +61,18 @@ const loginUser = async function (req, res) {
       .status(200)
       .cookie("accesstoken", accesstoken, options)
       .cookie("refreshtoken", refreshToken, options)
-      .json({
-        message: "Login successful",
-        user: existingUser,
-      });
+      .json({ message: "Login successful", user: existingUser });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
 const registerUser = async function (req, res) {
   try {
     const { username, email, password } = req.body;
-
-    const existedUser = await user.findOne({
-      $or: [{ username: username }, { email: email }],
-    });
-
+    console.log(username, email, password);
+    const existedUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existedUser) {
       if (existedUser.username === username) {
         return res.status(409).json({ message: "Username already exists" });
@@ -87,16 +81,11 @@ const registerUser = async function (req, res) {
       }
     }
 
-    const newUser = await user.create({
-      username: username,
-      email: email,
-      password: password,
-    });
+    await User.create({ username, email, password });
 
-    return res.status(200).json({
-      success: true,
-      message: "Registration successful",
-    });
+    return res
+      .status(200)
+      .json({ success: true, message: "Registration successful" });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false, message: "Server error" });

@@ -15,13 +15,6 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-
-  cars: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Car",
-    },
-  ],
 });
 
 UserSchema.pre("save", async function (next) {
