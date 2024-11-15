@@ -16,16 +16,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 setupSwagger(app);
-
 app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://spectacular-blini-a5bda5.netlify.app/",
+      "https://spectacular-blini-a5bda5.netlify.app",
     ],
     credentials: true,
   })
 );
+
 app.use("/api/cars", carsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
