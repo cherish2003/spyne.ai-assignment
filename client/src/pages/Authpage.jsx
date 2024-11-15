@@ -35,7 +35,7 @@ export const Authpage = () => {
   const handleSignIn = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/signin",
+        `${import.meta.env.VITE_API_URL}/api/auth/signin`,
         {
           email: signInEmail,
           password: signInPassword,
@@ -48,7 +48,7 @@ export const Authpage = () => {
           title: "Sign In Successful! ✅",
           description: "You have successfully signed in.",
         });
-        navigate("/home");
+        navigate("/home/discover");
       } else {
         toast({
           variant: "destructive",
@@ -69,7 +69,7 @@ export const Authpage = () => {
   const handleSignUp = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/register",
+        `${import.meta.env.VITE_API_URL}/api/auth/register`,
         {
           username: signUpName,
           email: signUpEmail,
@@ -100,7 +100,7 @@ export const Authpage = () => {
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center">
-      <div className="h-24 w-24">
+      <div className="h-36 w-36">
         <img
           src="https://www.spyne.ai/_next/image?url=https%3A%2F%2Fmedia.spyneai.com%2Funsafe%2Ffilters%3Aformat(webp)%2Fd20uiuzezo3er4.cloudfront.net%2FAI-tools%2Fai-tool-home%2FHeaderNew%2FSpyne%2BLogo%2Bblack.png&w=640&q=75"
           alt=""

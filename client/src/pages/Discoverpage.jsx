@@ -56,7 +56,7 @@ export default function Discoverpage() {
 
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/cars/search",
+        `${import.meta.env.VITE_API_URL}/api/cars/search`,
         {
           params: { searchQuery: searchQuery },
           withCredentials: true,

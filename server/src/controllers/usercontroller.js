@@ -41,5 +41,36 @@ const createNewcar = async function (req, res) {
       .json({ error: "Error uploading car details", details: error.message });
   }
 };
+const deleteCar = async function (req, res) {
+  const { carId } = req.params;
+  const { data } = req.user;
+  console.log("carId :", carId);
 
-module.exports = { createNewcar };
+  try {
+    const car = await Car.findById(carId);
+
+    if (!car) {
+      return res.status(404).json({ error: "Car not found" });
+    }
+
+    if (car.owner.toString() !== data._id.toString()) {
+      return res.status(403).json({ error: "Unauthorized to delete this car" });
+    }
+
+    const imageDeletionPromises = car.images.map((imageUrl) => {
+      const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0];
+      return cloudinary.uploader.destroy(`cars/${publicId}`);
+    });
+    await Promise.all(imageDeletionPromises);
+
+    await Car.findByIdAndDelete(carId);
+
+    res.status(200).json({ message: "Car deleted successfully!" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Error deleting car", details: error.message });
+  }
+};
+
+module.exports = { createNewcar, deleteCar };

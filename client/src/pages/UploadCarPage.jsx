@@ -44,7 +44,7 @@ export default function UploadCarPage() {
       toast({
         variant: "destructive",
         title: "All inputs are required !! 🥲",
-        description: "Enter the required data as mentioned above ",
+        description: "Enter the required data as mentioned above",
       });
       return;
     } else {
@@ -57,7 +57,7 @@ export default function UploadCarPage() {
 
       try {
         const response = await axios.post(
-          "http://localhost:3000/api/user/upload",
+          `${import.meta.env.VITE_API_URL}/api/user/upload`,
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },

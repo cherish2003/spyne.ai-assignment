@@ -104,36 +104,45 @@ const registerUser = async function (req, res) {
 //   });
 // };
 
-const getRefreshToken = function (req, res) {
-  const refreshtoken = req.cookies.refreshtoken;
-  jwt.verify(
-    refreshtoken,
-    process.env.REFRESH_TOKEN_SECRET,
-    function (err, userFromToken) {
-      if (err) {
-        console.log(err);
-        return res
-          .status(422)
-          .clearCookie("accesstoken")
-          .clearCookie("refreshtoken")
-          .json({
-            message: "Refresh token expired",
-            logout: true,
-          });
-      }
-      const userId = userFromToken.userId;
-      user.findById(userId, function (err, existedUser) {
-        if (err || existedUser === null) {
-          return res.status(404).json({ logout: true });
-        }
-        const accesstoken = generateTokens(userFromToken).accesstoken;
-        res
-          .status(200)
-          .cookie("accesstoken", accesstoken)
-          .json({ logout: false });
-      });
+const getRefreshToken = async (req, res) => {
+  const refreshToken = req.cookies.refreshtoken;
+
+  if (!refreshToken) {
+    return res
+      .status(403)
+      .json({ message: "Refresh token missing", logout: true });
+  }
+
+  try {
+    const decodedToken = jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET
+    );
+    const userId = decodedToken.userId;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found", logout: true });
     }
-  );
+
+    const { accesstoken } = generateTokens({ userId: user._id });
+
+    res.cookie("accesstoken", accesstoken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+    });
+
+    return res.status(200).json({ logout: false });
+  } catch (error) {
+    console.error("Error verifying refresh token:", error);
+
+    return res
+      .status(422)
+      .clearCookie("accesstoken")
+      .clearCookie("refreshtoken")
+      .json({ message: "Refresh token expired", logout: true });
+  }
 };
 
 module.exports = { registerUser, loginUser, getRefreshToken };

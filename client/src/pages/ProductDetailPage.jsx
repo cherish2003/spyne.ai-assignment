@@ -13,8 +13,10 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ProductDetailPage() {
+  const { toast } = useToast();
   const plugin = React.useRef(
     Autoplay({ delay: 2000, stopOnInteraction: true })
   );
@@ -22,7 +24,7 @@ export default function ProductDetailPage() {
   const navigate = useNavigate();
 
   const { car, edit } = location.state || {};
-  const [editMode, setEditMode] = useState(edit || false);
+  const [editMode, setEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [updatedCar, setUpdatedCar] = useState({
     title: car?.title,
@@ -51,12 +53,17 @@ export default function ProductDetailPage() {
     setIsLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/cars/edit/${car._id}`,
+        `${import.meta.env.VITE_API_URL}/api/cars/edit/${car._id}`,
         updatedCar,
         {
           withCredentials: true,
         }
       );
+        toast({
+          variant: "destructive",
+          title: "Car details deleted ✅",
+          description: "Enter the required data as mentioned above ",
+        });
       console.log("Car updated:", response.data);
       setEditMode(false);
     } catch (error) {
@@ -72,8 +79,29 @@ export default function ProductDetailPage() {
     setUpdatedCar({ ...updatedCar, tags: updatedTags });
   };
 
+  const handleDeleteClick = async () => {
+    if (window.confirm("Are you sure you want to delete this car?")) {
+      setIsLoading(true);
+      try {
+        await axios.delete(
+          `${import.meta.env.VITE_API_URL}/api/user/delete/${car._id}`,
+          {
+            withCredentials: true,
+          }
+        );
+
+        console.log("Car deleted successfully");
+        navigate("/home/product");
+      } catch (error) {
+        console.error("Error deleting car:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
   if (!car) {
-    return <p>No Car details found upload to view</p>;
+    return <p>No Car details found. Upload to view.</p>;
   }
 
   return (
@@ -180,9 +208,9 @@ export default function ProductDetailPage() {
             <>
               <h2 className="text-2xl font-bold mb-4">{car?.title}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
+                <div className="max-w-full overflow-hidden">
                   <h3 className="text-lg font-semibold mb-2">Description</h3>
-                  <p className="text-md text-muted-foreground mb-4">
+                  <p className="text-md text-muted-foreground mb-4 break-words">
                     {car?.description}
                   </p>
                   <h3 className="text-lg font-semibold mb-2">Tags</h3>
@@ -196,9 +224,12 @@ export default function ProductDetailPage() {
                 </div>
               </div>
               {edit && (
-                <Button onClick={handleEditClick} className="mt-4">
-                  Edit
-                </Button>
+                <div className="flex gap-4 mt-4">
+                  <Button onClick={handleEditClick}>Edit</Button>
+                  <Button variant="destructive" onClick={handleDeleteClick}>
+                    Delete
+                  </Button>
+                </div>
               )}
             </>
           )}
@@ -206,4 +237,5 @@ export default function ProductDetailPage() {
       </div>
     </div>
   );
+  z;
 }

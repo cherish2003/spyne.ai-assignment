@@ -1,0 +1,83 @@
+openapi: 3.0.0
+info:
+  title: Car Management API
+  version: 1.0.0
+  description: API documentation for Car Management
+servers:
+  - url: http://localhost:3000
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths:
+  /auth/signin:
+    post:
+      summary: Sign in a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Successful login
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                name:
+                  type: string
+      responses:
+        201:
+          description: User registered successfully
+  /cars/me:
+    get:
+      summary: Get user's cars
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: List of user’s cars
+  /cars/edit/{id}:
+    put:
+      summary: Edit car details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Car details updated
+  /cars/search:
+    get:
+      summary: Search cars
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: List of matching cars

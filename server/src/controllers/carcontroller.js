@@ -28,7 +28,7 @@ const editCardDetails = async (req, res) => {
       return res.status(404).json({ message: "Car not found" });
     }
 
-    res.status(200).json(updatedCar); // Return the updated car details
+    res.status(200).json(updatedCar);
   } catch (error) {
     console.error("Error updating car:", error);
     res.status(500).json({ message: "Server error while updating car" });
@@ -38,18 +38,17 @@ const searchCars = async (req, res) => {
   const { searchQuery } = req.query;
 
   try {
-    // If there is a search query, filter cars based on title, description, or tags
     const query = searchQuery
       ? {
           $or: [
-            { title: { $regex: searchQuery, $options: "i" } }, // Case-insensitive search on title
-            { description: { $regex: searchQuery, $options: "i" } }, // Case-insensitive search on description
-            { tags: { $regex: searchQuery, $options: "i" } }, // Case-insensitive search on tags
+            { title: { $regex: searchQuery, $options: "i" } }, 
+            { description: { $regex: searchQuery, $options: "i" } },
+            { tags: { $regex: searchQuery, $options: "i" } }, 
           ],
         }
       : {};
 
-    const cars = await Car.find(query); // Fetch cars based on the query
+    const cars = await Car.find(query);
     res.status(200).json({ success: true, data: cars });
   } catch (error) {
     console.error("Error fetching cars:", error);
